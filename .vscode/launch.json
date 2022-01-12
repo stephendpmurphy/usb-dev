@@ -2,18 +2,18 @@
     "version": "0.2.0",
     "configurations": [
     {
-        "name": "Debug MICRO_PN",
+        "name": "Debug LPC5526",
         "type": "cortex-debug",
         "request": "launch",
         "servertype":"pyocd",
         "cwd": "${workspaceRoot}",
-        "executable": "./output/debug/PROJECT_BINARY.elf",
-        "device": "MICRO_PN_FROM_PYOCD",
+        "executable": "./output/debug/usb-dev.elf",
+        "device": "lpc5526",
         "runToMain": true,
         "v1": false,
         "serverArgs": [
             "--target",
-            "MICRO_PN_FROM_PYOCD"
+            "lpc5526"
         ]
     }]
 }

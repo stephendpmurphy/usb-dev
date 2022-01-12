@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.13)
 # Set our project and CPU specific flags, options, definitions and Linker Settings
 #####################################################################################
 # Project name
-set(PROJECT_NAME "QC_Carrier")
+set(PROJECT_NAME "usb-dev")
 # Desired executable name
 set(EXECUTABLE_NAME ${PROJECT_NAME})
 # MCU Target name as seen in PyOCD
@@ -16,16 +16,20 @@ set(COMPILER_CPU_FLAGS "-mcpu=cortex-m33 -mfloat-abi=hard -mfpu=fpv5-sp-d16")
 
 # Set any libraries you would need to link against (.a libs, gcc, c, m, nosys as examples)
 # NOT TO BE CONFUSED WITH LINKER FLAGS. FLAGS BELONG IN the flags.cmake file
-set(LINKER_STATIC_LIBRARIES
+set(LINKER_STATIC_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/gcc/libpower_hardabi.a
+                    m
+                    c
+                    gcc
+                    nosys
 )
 
 # Specify the location of our Linker file
-set(CPU_LINKER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/board/LINKER_FILE.ld)
+set(CPU_LINKER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/gcc/LPC5526_flash.ld)
 
 # Set debug build specific definitions
-set(DEBUG_BUILD_DEFINITIONS -DDEBUG_BUILD)
+set(DEBUG_BUILD_DEFINITIONS -DDEBUG -DDEBUG_BUILD -D__STARTUP_CLEAR_BSS -DSERIAL_PORT_TYPE_UART=1 -DCPU_LPC5526JBD64)
 # Set release build specific definitions
-set(RELEASE_BUILD_DEFINITIONS -DRELEASE_BUILD)
+set(RELEASE_BUILD_DEFINITIONS -DNDEBUG -DRELEASE_BUILD -D__STARTUP_CLEAR_BSS -DSERIAL_PORT_TYPE_UART=1 -DCPU_LPC5526JBD64)
 
 # Create a list of our APP source
 set(APP_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/main.c
@@ -33,12 +37,32 @@ set(APP_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/main.c
 )
 
 # Glob together a list of our SDK source
-FILE(GLOB SDK_SRC
+FILE(GLOB SDK_SRC    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/*.c
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/gcc/*.S
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/drivers/*.c
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/utilities/*.c
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/utilities/debug_console/*.c
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/utilities/debug_console_lite/*.c
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/utilities/str/*.c
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/components/uart/*.c
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/components/lists/*.c
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/components/serial_manager/*.c
 )
 
 # Set all of our application and SDK include paths
 set(INCLUDE_DIRS    ${CMAKE_CURRENT_SOURCE_DIR}/src/
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/board
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glasslabs/AD5697R/inc
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/drivers
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/utilities
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/utilities/debug_console
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/utilities/debug_console_lite
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/devices/LPC5526/utilities/str
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/components/uart
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/components/lists
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/components/serial_manager
+                    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nxp/SDK/CMSIS/Include
 )
 
 #####################################################################################

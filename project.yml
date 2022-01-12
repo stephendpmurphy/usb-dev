@@ -46,7 +46,7 @@
   #  1) remove the trailing [] from the :common: section
   #  2) add entries to the :common: section (e.g. :test: has TEST defined)
   :common: &common_defines
-    - CPU_DEFINE_PN
+    - CPU_LPC5526JBD64
 
   :test:
     - *common_defines

@@ -1,8 +1,3 @@
-/******************************************************************************
-Glassboard Standard Board Init
-Copyright (c) 2021 Glassboard
-board.c
-*******************************************************************************/
 #include <stdint.h>
 
 volatile uint32_t g_systickCounter;

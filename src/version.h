@@ -1,7 +1,6 @@
 #ifndef _VERSION_H_
 #define _VERSION_H_
 
-// Thermaquil follows the Semantic versioning scheme.
 // https://semver.org/
 #define VERSION_MAJOR   0
 #define VERSION_MINOR   1
