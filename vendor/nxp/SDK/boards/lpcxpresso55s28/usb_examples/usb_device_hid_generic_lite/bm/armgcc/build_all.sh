@@ -1,4 +1,5 @@
 #!/bin/sh
+export ARMGCC_DIR=/usr/local/gcc-arm-none-eabi-10-2020-q4-major
 if [ -d "CMakeFiles" ];then rm -rf CMakeFiles; fi
 if [ -f "Makefile" ];then rm -f Makefile; fi
 if [ -f "cmake_install.cmake" ];then rm -f cmake_install.cmake; fi
