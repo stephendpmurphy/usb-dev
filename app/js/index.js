@@ -30,4 +30,5 @@ intf.endpoints[0].on('error', (err) => {
 });
 intf.endpoints[0].on('end', () => {
     console.log("Stream ended.");
+    process.exit(0);
 });
