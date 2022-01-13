@@ -22,11 +22,6 @@
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "board.h"
-
-#if (defined(FSL_FEATURE_SOC_SYSMPU_COUNT) && (FSL_FEATURE_SOC_SYSMPU_COUNT > 0U))
-#include "fsl_sysmpu.h"
-#endif /* FSL_FEATURE_SOC_SYSMPU_COUNT */
-
 #include "fsl_power.h"
 #include "usb_phy.h"
 /*******************************************************************************
@@ -39,9 +34,6 @@
 void BOARD_InitHardware(void);
 void USB_DeviceClockInit(void);
 void USB_DeviceIsrEnable(void);
-#if USB_DEVICE_CONFIG_USE_TASK
-void USB_DeviceTaskFn(void *deviceHandle);
-#endif
 
 static usb_status_t USB_DeviceHidGenericInterruptIn(usb_device_handle handle,
                                                     usb_device_endpoint_callback_message_struct_t *message,
@@ -49,7 +41,6 @@ static usb_status_t USB_DeviceHidGenericInterruptIn(usb_device_handle handle,
 static usb_status_t USB_DeviceHidGenericInterruptOut(usb_device_handle handle,
                                                      usb_device_endpoint_callback_message_struct_t *message,
                                                      void *callbackParam);
-static void USB_DeviceApplicationInit(void);
 
 /*******************************************************************************
  * Variables
@@ -95,20 +86,23 @@ void USB_DeviceIsrEnable(void)
     NVIC_SetPriority((IRQn_Type)irqNumber, USB_DEVICE_INTERRUPT_PRIORITY);
     EnableIRQ((IRQn_Type)irqNumber);
 }
-#if USB_DEVICE_CONFIG_USE_TASK
-void USB_DeviceTaskFn(void *deviceHandle)
-{
-    USB_DeviceLpcIp3511TaskFunction(deviceHandle);
-}
-#endif
 
 /* The hid generic interrupt IN endpoint callback */
 static usb_status_t USB_DeviceHidGenericInterruptIn(usb_device_handle handle,
                                                     usb_device_endpoint_callback_message_struct_t *message,
                                                     void *callbackParam)
 {
-    uint8_t buff[10] = {'B', 'E', 'E', 'F', '\0'};
-    memcpy((void*)&g_UsbDeviceHidGeneric.buffer[1][0], buff, 5);
+    // uint8_t buff[10] = {'B', 'E', 'E', 'F', '\0'};
+    // memcpy((void*)&g_UsbDeviceHidGeneric.buffer[1][0], buff, 5);
+    g_UsbDeviceHidGeneric.buffer[1][0] += 1;
+
+    if(g_UsbDeviceHidGeneric.buffer[1][0] == 0) {
+        g_UsbDeviceHidGeneric.buffer[1][1] += 1;
+    }
+
+    if(g_UsbDeviceHidGeneric.buffer[1][1] == 0) {
+        g_UsbDeviceHidGeneric.buffer[1][2] += 1;
+    }
 
     if (g_UsbDeviceHidGeneric.attach)
     {
@@ -324,12 +318,9 @@ usb_status_t USB_DeviceProcessClassRequest(usb_device_handle handle,
     return error;
 }
 
-static void USB_DeviceApplicationInit(void)
+void USB_DeviceApplicationInit(void)
 {
     USB_DeviceClockInit();
-#if (defined(FSL_FEATURE_SOC_SYSMPU_COUNT) && (FSL_FEATURE_SOC_SYSMPU_COUNT > 0U))
-    SYSMPU_Enable(SYSMPU, 0);
-#endif /* FSL_FEATURE_SOC_SYSMPU_COUNT */
 
     /* Set HID generic default state */
     g_UsbDeviceHidGeneric.speed        = USB_SPEED_FULL;
@@ -357,61 +348,48 @@ static void USB_DeviceApplicationInit(void)
     USB_DeviceRun(g_UsbDeviceHidGeneric.deviceHandle);
 }
 
-static void BOARD_InitDebugConsole(void)
-{
-    /* attach 12 MHz clock to FLEXCOMM0 (debug console) */
-    CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH);
-    RESET_ClearPeripheralReset(BOARD_DEBUG_UART_RST);
-    uint32_t uartClkSrcFreq = BOARD_DEBUG_UART_CLK_FREQ;
-    DbgConsole_Init(BOARD_DEBUG_UART_INSTANCE, BOARD_DEBUG_UART_BAUDRATE, BOARD_DEBUG_UART_TYPE, uartClkSrcFreq);
-}
+// static void BOARD_InitDebugConsole(void)
+// {
+//     /* attach 12 MHz clock to FLEXCOMM0 (debug console) */
+//     CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH);
+//     RESET_ClearPeripheralReset(BOARD_DEBUG_UART_RST);
+//     uint32_t uartClkSrcFreq = BOARD_DEBUG_UART_CLK_FREQ;
+//     DbgConsole_Init(BOARD_DEBUG_UART_INSTANCE, BOARD_DEBUG_UART_BAUDRATE, BOARD_DEBUG_UART_TYPE, uartClkSrcFreq);
+// }
 
-#if defined(__CC_ARM) || (defined(__ARMCC_VERSION)) || defined(__GNUC__)
-int main(void)
-#else
-void main(void)
-#endif
-{
-    /* set BOD VBAT level to 1.65V */
-    POWER_SetBodVbatLevel(kPOWER_BodVbatLevel1650mv, kPOWER_BodHystLevel50mv, false);
-    /* attach 12 MHz clock to FLEXCOMM0 (debug console) */
-    CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH);
+// void main(void)
+// {
+//     /* set BOD VBAT level to 1.65V */
+//     POWER_SetBodVbatLevel(kPOWER_BodVbatLevel1650mv, kPOWER_BodHystLevel50mv, false);
+//     /* attach 12 MHz clock to FLEXCOMM0 (debug console) */
+//     CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH);
 
-    BOARD_InitPins();
-    BOARD_BootClockPLL150M();
-    BOARD_InitDebugConsole();
+//     BOARD_InitPins();
+//     BOARD_BootClockPLL150M();
+//     BOARD_InitDebugConsole();
 
-    NVIC_ClearPendingIRQ(USB0_IRQn);
-    NVIC_ClearPendingIRQ(USB0_NEEDCLK_IRQn);
-    NVIC_ClearPendingIRQ(USB1_IRQn);
-    NVIC_ClearPendingIRQ(USB1_NEEDCLK_IRQn);
+//     NVIC_ClearPendingIRQ(USB1_IRQn);
+//     NVIC_ClearPendingIRQ(USB1_NEEDCLK_IRQn);
 
-    POWER_DisablePD(kPDRUNCFG_PD_USB0_PHY); /*< Turn on USB0 Phy */
-    POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY); /*< Turn on USB1 Phy */
+//     POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY); /*< Turn on USB1 Phy */
 
-    /* reset the IP to make sure it's in reset state. */
-    RESET_PeripheralReset(kUSB0D_RST_SHIFT_RSTn);
-    RESET_PeripheralReset(kUSB0HSL_RST_SHIFT_RSTn);
-    RESET_PeripheralReset(kUSB0HMR_RST_SHIFT_RSTn);
-    RESET_PeripheralReset(kUSB1H_RST_SHIFT_RSTn);
-    RESET_PeripheralReset(kUSB1D_RST_SHIFT_RSTn);
-    RESET_PeripheralReset(kUSB1_RST_SHIFT_RSTn);
-    RESET_PeripheralReset(kUSB1RAM_RST_SHIFT_RSTn);
+//     /* reset the IP to make sure it's in reset state. */
+//     RESET_PeripheralReset(kUSB1H_RST_SHIFT_RSTn);
+//     RESET_PeripheralReset(kUSB1D_RST_SHIFT_RSTn);
+//     RESET_PeripheralReset(kUSB1_RST_SHIFT_RSTn);
+//     RESET_PeripheralReset(kUSB1RAM_RST_SHIFT_RSTn);
 
-    CLOCK_EnableClock(kCLOCK_Usbh1);
-    /* Put PHY powerdown under software control */
-    *((uint32_t *)(USBHSH_BASE + 0x50)) = USBHSH_PORTMODE_SW_PDCOM_MASK;
-    /* According to reference mannual, device mode setting has to be set by access usb host register */
-    *((uint32_t *)(USBHSH_BASE + 0x50)) |= USBHSH_PORTMODE_DEV_ENABLE_MASK;
-    /* enable usb1 host clock */
-    CLOCK_DisableClock(kCLOCK_Usbh1);
+//     CLOCK_EnableClock(kCLOCK_Usbh1);
+//     /* Put PHY powerdown under software control */
+//     *((uint32_t *)(USBHSH_BASE + 0x50)) = USBHSH_PORTMODE_SW_PDCOM_MASK;
+//     /* According to reference mannual, device mode setting has to be set by access usb host register */
+//     *((uint32_t *)(USBHSH_BASE + 0x50)) |= USBHSH_PORTMODE_DEV_ENABLE_MASK;
+//     /* enable usb1 host clock */
+//     // CLOCK_DisableClock(kCLOCK_Usbh1);
 
-    USB_DeviceApplicationInit();
+//     USB_DeviceApplicationInit();
 
-    while (1U)
-    {
-#if USB_DEVICE_CONFIG_USE_TASK
-        USB_DeviceTaskFn(g_UsbDeviceHidGeneric.deviceHandle);
-#endif
-    }
-}
+//     while (1U)
+//     {
+//     }
+// }
