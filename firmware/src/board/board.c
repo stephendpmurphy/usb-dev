@@ -67,7 +67,7 @@ void BOARD_Init(void) {
     CLOCK_SetClkDiv(kCLOCK_DivAdcAsyncClk, 8U, true);
 
     // Set our SysTick frequency
-    SysTick_Config(SystemCoreClock / 1000000U);
+    SysTick_Config(SystemCoreClock / 1000U);
 
     // Set the initial LED states
     gpio_setStatusLED(false);

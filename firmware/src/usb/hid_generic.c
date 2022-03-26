@@ -94,16 +94,6 @@ static usb_status_t USB_DeviceHidGenericInterruptIn(usb_device_handle handle,
 {
     // uint8_t buff[10] = {'B', 'E', 'E', 'F', '\0'};
     // memcpy((void*)&g_UsbDeviceHidGeneric.buffer[1][0], buff, 5);
-    g_UsbDeviceHidGeneric.buffer[1][0] += 1;
-
-    if(g_UsbDeviceHidGeneric.buffer[1][0] == 0) {
-        g_UsbDeviceHidGeneric.buffer[1][1] += 1;
-    }
-
-    if(g_UsbDeviceHidGeneric.buffer[1][1] == 0) {
-        g_UsbDeviceHidGeneric.buffer[1][2] += 1;
-    }
-
     if (g_UsbDeviceHidGeneric.attach)
     {
         return USB_DeviceSendRequest(g_UsbDeviceHidGeneric.deviceHandle, USB_HID_GENERIC_ENDPOINT_IN,
@@ -318,7 +308,7 @@ usb_status_t USB_DeviceProcessClassRequest(usb_device_handle handle,
     return error;
 }
 
-void USB_DeviceApplicationInit(void)
+void USB_DeviceApplicationInit(uint8_t *IN_EP_BUFF, uint8_t *OUT_EP_BUFF)
 {
     USB_DeviceClockInit();
 
@@ -326,8 +316,8 @@ void USB_DeviceApplicationInit(void)
     g_UsbDeviceHidGeneric.speed        = USB_SPEED_FULL;
     g_UsbDeviceHidGeneric.attach       = 0U;
     g_UsbDeviceHidGeneric.deviceHandle = NULL;
-    g_UsbDeviceHidGeneric.buffer[0]    = (uint8_t *)&s_GenericBuffer0[0];
-    g_UsbDeviceHidGeneric.buffer[1]    = (uint8_t *)&s_GenericBuffer1[0];
+    g_UsbDeviceHidGeneric.buffer[0]    = OUT_EP_BUFF;
+    g_UsbDeviceHidGeneric.buffer[1]    = IN_EP_BUFF;
 
     /* Initialize the usb stack and class drivers */
     if (kStatus_USB_Success != USB_DeviceInit(CONTROLLER_ID, USB_DeviceCallback, &g_UsbDeviceHidGeneric.deviceHandle))

@@ -30,6 +30,6 @@ typedef struct _usb_hid_generic_struct
 /*******************************************************************************
  * API
  ******************************************************************************/
-void USB_DeviceApplicationInit(void);
+void USB_DeviceApplicationInit(uint8_t *IN_EP_BUFF, uint8_t *OUT_EP_BUFF);
 
 #endif /* __USB_DEVICE_HID_GENERIC_H__ */

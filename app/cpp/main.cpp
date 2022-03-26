@@ -85,15 +85,6 @@ int main(void) {
 		return 1;
 	}
 	cout<<"Claimed Interface"<<endl;
-	cout<<"Writing Data..."<<endl;
-	r = libusb_interrupt_transfer(dev_handle, (2 | LIBUSB_ENDPOINT_OUT), tx_data, 5, &actual, 0);
-
-	// r = libusb_bulk_transfer(dev_handle, (2 | LIBUSB_ENDPOINT_IN), data, 4, &actual, 0); //my device's out endpoint was 2, found with trial- the device had 2 endpoints: 2 and 129
-	if(r == 0 && actual == 5) //we read the 5 bytes successfully
-		cout<<"Writing Successful!"<<endl;
-	else
-		cout<<"Write Error"<<endl;
-	cout<<"TX Data->"<<tx_data<<"<-"<<endl;
 
 	cout<<"Reading Data..."<<endl;
 	r = libusb_interrupt_transfer(dev_handle, (129 | LIBUSB_ENDPOINT_IN), rx_data, 10, &actual, 1500);
