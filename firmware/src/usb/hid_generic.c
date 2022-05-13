@@ -66,12 +66,10 @@ void USB_DeviceClockInit(void)
     CLOCK_EnableUsbhs0PhyPllClock(kCLOCK_UsbPhySrcExt, BOARD_XTAL0_CLK_HZ);
     CLOCK_EnableUsbhs0DeviceClock(kCLOCK_UsbSrcUnused, 0U);
     USB_EhciPhyInit(CONTROLLER_ID, BOARD_XTAL0_CLK_HZ, NULL);
-#if defined(FSL_FEATURE_USBHSD_USB_RAM) && (FSL_FEATURE_USBHSD_USB_RAM)
     for (int i = 0; i < FSL_FEATURE_USBHSD_USB_RAM; i++)
     {
         ((uint8_t *)FSL_FEATURE_USBHSD_USB_RAM_BASE_ADDRESS)[i] = 0x00U;
     }
-#endif
 }
 void USB_DeviceIsrEnable(void)
 {

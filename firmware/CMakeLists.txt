@@ -40,7 +40,6 @@ set(APP_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/main.c
             ${CMAKE_CURRENT_SOURCE_DIR}/src/usb/hid_generic.c
             ${CMAKE_CURRENT_SOURCE_DIR}/src/usb/usb_device_ch9.c
             ${CMAKE_CURRENT_SOURCE_DIR}/src/usb/usb_device_descriptor.c
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/usb/usb_device_hid.c
 )
 
 # Glob together a list of our SDK source

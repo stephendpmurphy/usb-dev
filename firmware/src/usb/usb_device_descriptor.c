@@ -9,9 +9,7 @@
 #include "usb_device_config.h"
 #include "usb.h"
 #include "usb_device.h"
-
 #include "usb_device_hid.h"
-
 #include "usb_device_descriptor.h"
 #include "hid_generic.h"
 
@@ -161,23 +159,6 @@ uint8_t g_UsbDeviceConfigurationDescriptor[] = {
     FS_HID_GENERIC_INTERRUPT_OUT_INTERVAL, /* Interval for polling endpoint for data transfers. */
 };
 
-#if (defined(USB_DEVICE_CONFIG_CV_TEST) && (USB_DEVICE_CONFIG_CV_TEST > 0U))
-USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
-uint8_t g_UsbDeviceQualifierDescriptor[] = {
-    USB_DESCRIPTOR_LENGTH_DEVICE_QUALITIER, /* Size of this descriptor in bytes */
-    USB_DESCRIPTOR_TYPE_DEVICE_QUALITIER,   /* DEVICE Descriptor Type */
-    USB_SHORT_GET_LOW(USB_DEVICE_SPECIFIC_BCD_VERSION),
-    USB_SHORT_GET_HIGH(USB_DEVICE_SPECIFIC_BCD_VERSION), /* USB Specification Release Number in
-                                                            Binary-Coded Decimal (i.e., 2.10 is 210H). */
-    USB_DEVICE_CLASS,                                    /* Class code (assigned by the USB-IF). */
-    USB_DEVICE_SUBCLASS,                                 /* Subclass code (assigned by the USB-IF). */
-    USB_DEVICE_PROTOCOL,                                 /* Protocol code (assigned by the USB-IF). */
-    USB_CONTROL_MAX_PACKET_SIZE,                         /* Maximum packet size for endpoint zero
-                                                            (only 8, 16, 32, or 64 are valid) */
-    0x00U,                                               /* Number of Other-speed Configurations */
-    0x00U,                                               /* Reserved for future use, must be zero */
-};
-#endif
 USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
 uint8_t g_UsbDeviceString0[] = {
     2U + 2U,
@@ -188,8 +169,17 @@ uint8_t g_UsbDeviceString0[] = {
 
 USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
 uint8_t g_UsbDeviceString1[] = {
-    2U + 2U * 7U, USB_DESCRIPTOR_TYPE_STRING,
+    2U + 2U * 16U, USB_DESCRIPTOR_TYPE_STRING,
+    '@',           0x00U,
     's',           0x00U,
+    't',           0x00U,
+    'e',           0x00U,
+    'p',           0x00U,
+    'h',           0x00U,
+    'e',           0x00U,
+    'n',           0x00U,
+    'd',           0x00U,
+    'p',           0x00U,
     'm',           0x00U,
     'u',           0x00U,
     'r',           0x00U,
@@ -255,14 +245,12 @@ usb_status_t USB_DeviceGetDescriptor(usb_device_handle handle,
     switch (descriptorType)
     {
         case USB_DESCRIPTOR_TYPE_HID_REPORT:
-        {
             /* Get HID report descriptor */
             *buffer = g_UsbDeviceHidGenericReportDescriptor;
             *length = USB_DESCRIPTOR_LENGTH_HID_GENERIC_REPORT;
-        }
-        break;
+            break;
+
         case USB_DESCRIPTOR_TYPE_STRING:
-        {
             /* Get string descriptor */
             if (0U == descriptorIndex)
             {
@@ -293,31 +281,20 @@ usb_status_t USB_DeviceGetDescriptor(usb_device_handle handle,
                 *buffer = (uint8_t *)g_UsbDeviceLanguageList.languageList[languageId].string[languageIndex];
                 *length = g_UsbDeviceLanguageList.languageList[languageId].length[languageIndex];
             }
-        }
-        break;
+            break;
+
         case USB_DESCRIPTOR_TYPE_DEVICE:
-        {
             /* Get device descriptor */
             *buffer = g_UsbDeviceDescriptor;
             *length = USB_DESCRIPTOR_LENGTH_DEVICE;
-        }
-        break;
+            break;
+
         case USB_DESCRIPTOR_TYPE_CONFIGURE:
-        {
             /* Get configuration descriptor */
             *buffer = g_UsbDeviceConfigurationDescriptor;
             *length = USB_DESCRIPTOR_LENGTH_CONFIGURATION_ALL;
-        }
-        break;
-#if (defined(USB_DEVICE_CONFIG_CV_TEST) && (USB_DEVICE_CONFIG_CV_TEST > 0U))
-        case USB_DESCRIPTOR_TYPE_DEVICE_QUALITIER:
-        {
-            /* Get Qualifier descriptor */
-            *buffer = g_UsbDeviceQualifierDescriptor;
-            *length = USB_DESCRIPTOR_LENGTH_DEVICE_QUALITIER;
-        }
-        break;
-#endif
+            break;
+
         default:
             error = kStatus_USB_InvalidRequest;
             break;
