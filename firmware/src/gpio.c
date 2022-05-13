@@ -3,6 +3,7 @@
 #include "gpio.h"
 #include "board.h"
 #include "pin_mux.h"
+#include "fsl_gpio.h"
 
 void gpio_setStat0(bool val) {
     if( val ) {
