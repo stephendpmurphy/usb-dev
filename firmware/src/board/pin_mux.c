@@ -64,26 +64,16 @@ void BOARD_InitPins(void)
     CLOCK_EnableClock(kCLOCK_Iocon);
 
     /* Enables the clock for the GPIO1 module */
+    CLOCK_EnableClock(kCLOCK_Gpio0);
     CLOCK_EnableClock(kCLOCK_Gpio1);
 
     // Enable the port for our LEDs
-    GPIO_PortInit(GPIO, BOARD_LED_COMM_GPIO_PORT);
-    GPIO_PortInit(GPIO, BOARD_LED_PWR_GPIO_PORT);
-    GPIO_PortInit(GPIO, BOARD_LED_STATUS_GPIO_PORT);
+    GPIO_PortInit(GPIO, 0U);
+    GPIO_PortInit(GPIO, 1U);
 
-    gpio_pin_config_t LED_COMM_config = {
+    gpio_pin_config_t LED_STAT_config = {
         .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-
-    gpio_pin_config_t LED_PWR_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-
-    gpio_pin_config_t LED_STATUS_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
+        .outputLogic = 1U
     };
 
     gpio_pin_config_t mA_nEN_config = {
@@ -102,9 +92,8 @@ void BOARD_InitPins(void)
     };
 
     // Init our LED ui pins
-    GPIO_PinInit(GPIO, BOARD_LED_COMM_GPIO_PORT, BOARD_LED_COMM_GPIO_PIN, &LED_COMM_config);
-    GPIO_PinInit(GPIO, BOARD_LED_PWR_GPIO_PORT, BOARD_LED_PWR_GPIO_PIN, &LED_PWR_config);
-    GPIO_PinInit(GPIO, BOARD_LED_STATUS_GPIO_PORT, BOARD_LED_STATUS_GPIO_PIN, &LED_STATUS_config);
+    GPIO_PinInit(GPIO, BOARD_LED_STAT0_GPIO_PORT, BOARD_LED_STAT0_GPIO_PIN, &LED_STAT_config);
+    GPIO_PinInit(GPIO, BOARD_LED_STAT1_GPIO_PORT, BOARD_LED_STAT1_GPIO_PIN, &LED_STAT_config);
 
     // Init our range select pins
     GPIO_PinInit(GPIO, BOARD_mA_nEN_GPIO_PORT, BOARD_mA_nEN_GPIO_PIN, &mA_nEN_config);

@@ -69,11 +69,6 @@ void BOARD_Init(void) {
     // Set our SysTick frequency
     SysTick_Config(SystemCoreClock / 1000U);
 
-    // Set the initial LED states
-    gpio_setStatusLED(false);
-    gpio_setPowerLED(false);
-    gpio_setCommLED(false);
-
     // Set the initial Range select states
     gpio_setMicroAmpEn(false);
     gpio_setNanoAmpEn(false);
