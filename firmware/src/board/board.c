@@ -68,11 +68,6 @@ void BOARD_Init(void) {
 
     // Set our SysTick frequency
     SysTick_Config(SystemCoreClock / 1000U);
-
-    // Set the initial Range select states
-    gpio_setMicroAmpEn(false);
-    gpio_setNanoAmpEn(false);
-    gpio_setMilliAmpEn(true);
 }
 
 void BOARD_DelayTicks(uint32_t n)

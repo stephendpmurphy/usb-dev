@@ -4,8 +4,7 @@
 #include <stdbool.h>
 #include "fsl_gpio.h"
 
-void gpio_setMilliAmpEn(bool val);
-void gpio_setMicroAmpEn(bool val);
-void gpio_setNanoAmpEn(bool val);
+void gpio_setStat0(bool val);
+void gpio_setStat1(bool val);
 
 #endif // _GPIO_H_

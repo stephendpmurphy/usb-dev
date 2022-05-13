@@ -47,10 +47,6 @@ static usb_status_t USB_DeviceHidGenericInterruptOut(usb_device_handle handle,
  ******************************************************************************/
 
 USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_SetupOutBuffer[8];
-USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
-static uint32_t s_GenericBuffer0[USB_HID_GENERIC_OUT_BUFFER_LENGTH >> 2];
-USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
-static uint32_t s_GenericBuffer1[USB_HID_GENERIC_OUT_BUFFER_LENGTH >> 2];
 usb_hid_generic_struct_t g_UsbDeviceHidGeneric;
 
 extern uint8_t g_UsbDeviceCurrentConfigure;

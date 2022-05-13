@@ -76,29 +76,9 @@ void BOARD_InitPins(void)
         .outputLogic = 1U
     };
 
-    gpio_pin_config_t mA_nEN_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-
-    gpio_pin_config_t uA_nEN_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-
-    gpio_pin_config_t nA_nEN_config = {
-        .pinDirection = kGPIO_DigitalOutput,
-        .outputLogic = 0U
-    };
-
     // Init our LED ui pins
     GPIO_PinInit(GPIO, BOARD_LED_STAT0_GPIO_PORT, BOARD_LED_STAT0_GPIO_PIN, &LED_STAT_config);
     GPIO_PinInit(GPIO, BOARD_LED_STAT1_GPIO_PORT, BOARD_LED_STAT1_GPIO_PIN, &LED_STAT_config);
-
-    // Init our range select pins
-    GPIO_PinInit(GPIO, BOARD_mA_nEN_GPIO_PORT, BOARD_mA_nEN_GPIO_PIN, &mA_nEN_config);
-    GPIO_PinInit(GPIO, BOARD_uA_nEN_GPIO_PORT, BOARD_uA_nEN_GPIO_PIN, &uA_nEN_config);
-    GPIO_PinInit(GPIO, BOARD_nA_nEN_GPIO_PORT, BOARD_nA_nEN_GPIO_PIN, &nA_nEN_config);
 
     // ADC 0 INPUT CH0
     const uint32_t port0_pin23_config = (/* Pin is configured as ADC0_0 */
